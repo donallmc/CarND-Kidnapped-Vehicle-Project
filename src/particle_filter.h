@@ -10,6 +10,7 @@
 #define PARTICLE_FILTER_H_
 
 #include "helper_functions.h"
+#include <random>
 
 struct Particle {
 
@@ -30,13 +31,11 @@ class ParticleFilter {
 	// Number of particles to draw
 	int num_particles; 
 	
-	
-	
 	// Flag, if filter is initialized
 	bool is_initialized;
-	
-	// Vector of weights of all particles
-	std::vector<double> weights;
+
+	//random number generator
+        std::default_random_engine generator;
 	
 public:
 	
@@ -90,6 +89,13 @@ public:
 	 */
 	void updateWeights(double sensor_range, double std_landmark[], const std::vector<LandmarkObs> &observations,
 			const Map &map_landmarks);
+
+
+	std::vector<LandmarkObs> findLandmarksInRange(Particle& particle, double sensor_range, const Map &map_landmarks);
+
+	std::vector<LandmarkObs> transformToMapCoords(const std::vector<LandmarkObs> &observations, Particle& particle);
+
+	void setWeights(Particle& particle, std::vector<LandmarkObs> &observations, std::vector<LandmarkObs>& landmarks, double std_landmark[]);
 	
 	/**
 	 * resample Resamples from the updated set of particles to form
